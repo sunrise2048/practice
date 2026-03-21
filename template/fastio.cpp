@@ -43,3 +43,15 @@ using fastio::IN;
 using fastio::OUT;
 IN fin;
 OUT fout;
+using ull=unsigned long long;
+using L=__uint128_t;
+struct FastMod{
+    ull b,m;
+    FastMod(ull b):b(b),m(ull((L(1)<<64)/b)){}
+    ull operator()(ull a){
+        ull q=(ull)((L(m)*a)>>64);
+        ull r=a-q*b;
+        return r>=b?r-b:r;
+    }
+};
+FastMod md(2);

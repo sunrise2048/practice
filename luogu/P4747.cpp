@@ -1,13 +1,14 @@
 #include<bits/stdc++.h>
 using namespace std;
 using ll=long long;
-const int N=3e5+5;
+const int N=1e5+5;
 int n;
 int a[N];
 pair<int,int> nd[N<<1];
 int nl[N<<1];
 bool fl[N<<1];
 vector<int> e[N<<1];
+vector<int> ql[N<<1];
 stack<int> st;
 int cn;
 class SGT{
@@ -107,14 +108,41 @@ void ins(int no){
     nl[td]=nl[e[td][0]];
     ins(td);
 }
+int si[N<<1],zs[N<<1];
+int top[N<<1],fa[N<<1];
+int d[N<<1];
+void dfs1(int no){
+    si[no]=1;
+    for(int to:e[no]){
+        d[to]=d[no]+1;
+        dfs1(to);
+        fa[to]=no;
+        si[no]+=si[to];
+        if(si[zs[no]]<si[to])zs[no]=to;
+    }
+}
+void dfs2(int no,int tp){
+    top[no]=tp;
+    if(!zs[no])return;
+    dfs2(zs[no],tp);
+    for(int to:e[no]){
+        if(to==zs[no])continue;
+        dfs2(to,to);
+    }
+}
+int lca(int x,int y){
+    while(top[x]!=top[y]){
+        if(d[top[x]]>d[top[y]])x=fa[top[x]];
+        else y=fa[top[y]];
+    }
+    return d[x]<d[y]?x:y;
+}
 int main(){
     ios::sync_with_stdio(0);
     cin.tie(0);cout.tie(0);
     cin>>n;
     for(int i=1;i<=n;++i){
-        int x,y;
-        cin>>x>>y;
-        a[x]=y;
+        cin>>a[i];
     }
     cn=n;
     for(int i=1;i<=n;++i){
@@ -137,14 +165,30 @@ int main(){
         st_ma.push(i);
         ins(i);
     }
-    ll ans=n;
-    for(int i=n+1;i<=cn;++i){
-        if(!fl[i]){
-            ++ans;
-            continue;
+    int rt=st.top();
+    dfs1(rt);
+    dfs2(rt,rt);
+    for(int i=1;i<=cn;++i){
+        if(!fl[i])continue;
+        for(int to:e[i]){
+            ql[i].push_back(nl[to]);
         }
-        ans+=1ll*e[i].size()*(e[i].size()-1)/2;
+        ql[i].push_back(nl[i]+nd[i].second-nd[i].first+1);
     }
-    cout<<ans<<'\n';
+    int q;
+    cin>>q;
+    while(q--){
+        int x,y;
+        cin>>x>>y;
+        int lc=lca(x,y);
+        if(!fl[lc]){
+            cout<<nl[lc]<<' '<<nl[lc]+nd[lc].second-nd[lc].first<<'\n';
+        }
+        else{
+            int nl=*prev(upper_bound(ql[lc].begin(),ql[lc].end(),x));
+            int nr=(*upper_bound(ql[lc].begin(),ql[lc].end(),y))-1;
+            cout<<nl<<' '<<nr<<'\n';
+        }
+    }
     return 0;
 }
