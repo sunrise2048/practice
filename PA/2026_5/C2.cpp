@@ -9,13 +9,42 @@ int main(){
     cin>>T;
     while(T--){
         cin>>n>>k;
-        if(n>2*k){
-            cout<<"NIE\n";
+        if(k==1){
+            string s="PA";
+            if(n>s.size()){
+                s="NIE";
+            }
+            else s.resize(n);
+            cout<<s<<'\n';
             continue;
         }
-        for(int i=1;i<=k;++i)cout<<"A";
-        for(int i=1;i<=n-k;++i)cout<<"P";
-        cout<<'\n';
+        if(k==2){
+            string s="PPAA";
+            if(n>s.size()){
+                s="NIE";
+            }
+            else s.resize(n);
+            cout<<s<<'\n';
+            continue;
+        }
+        if(k==3){
+            string s="AAAPAPPP";
+            if(n>s.size()){
+                s="NIE";
+            }
+            else s.resize(n);
+            cout<<s<<'\n';
+            continue;
+        }
+        string s;
+        for(int i=1;i<=k;++i)s+="A";
+        int op=0;
+        string t="PAPPAA";
+        while(s.size()<n){
+            s+=t[op];
+            op=(op+1)%6;
+        }
+        cout<<s<<'\n';
     }
     return 0;
 }
